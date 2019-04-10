@@ -23,6 +23,7 @@ gitops_east_path = ""
 
 central_resource_group_name = "spin-central-rg"
 central_resource_group_location = "centralus"
+gitops_central_path = ""
 
 cluster_name = "spincluster"
 

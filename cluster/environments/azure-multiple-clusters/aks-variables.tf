@@ -49,3 +49,24 @@ variable "flux_recreate" {
     type = "string"
     default = ""
 }
+
+variable "acr_enabled" {
+  type    = "string"
+  default = "true"
+}
+
+variable "agent_vm_size" {
+  type = "string"
+}
+
+variable "keyvault_name" {
+  type = "string"
+}
+
+variable "keyvault_resource_group" {
+  type = "string"
+}
+
+variable "vnet_subnet_id" {
+  type = "string"
+}
