@@ -30,7 +30,8 @@ module "central_vnet" {
 
 data "azurerm_client_config" "centralclient" {}
 
-module "aks-gitops" {
+# Central aks, flux kubediff
+module "central-aks-gitops" {
   # source = "github.com/Microsoft/bedrock/cluster/azure/aks-gitops"
   source = "../../azure/aks-gitops"
 
@@ -52,7 +53,7 @@ module "aks-gitops" {
   vnet_subnet_id           = "${var.vnet_subnet_id}"
 }
 
-module "flex_volume" {
+module "central-flex_volume" {
   source = "github.com/Microsoft/bedrock/cluster/azure/keyvault_flexvol"
 
   resource_group_name      = "${var.keyvault_resource_group}"
@@ -62,7 +63,7 @@ module "flex_volume" {
   subscription_id          = "${data.azurerm_client_config.centralclient.subscription_id}"
   keyvault_name            = "${var.keyvault_name}"
 
-  kubeconfig_complete = "${module.aks-gitops.kubeconfig_done}"
+  kubeconfig_complete = "${module.central-aks-gitops.kubeconfig_done}"
 }
 
 
@@ -106,7 +107,7 @@ module "central_tm_endpoint" {
   # source = "github.com/Microsoft/bedrock/cluster/azure/tm-endpoint-ip"
   source = "../../azure/tm-endpoint-ip"
 
-  resource_group_name                 = "${var.service_principal_is_owner == "1" ? local.central_rg_name : module.aks-gitops.cluster_derived_resource_group}"
+  resource_group_name                 = "${var.service_principal_is_owner == "1" ? local.central_rg_name : module.central-aks-gitops.cluster_derived_resource_group}"
   resource_location                   = "${local.central_rg_location}"
   traffic_manager_resource_group_name = "${var.traffic_manager_resource_group_name}"
   traffic_manager_profile_name        = "${var.traffic_manager_profile_name}"
@@ -116,7 +117,7 @@ module "central_tm_endpoint" {
 
   tags = {
     environment = "azure-multiple-clusters - ${var.cluster_name} - public ip"
-    kubedone = "${module.aks-gitops.kubeconfig_done}"
+    kubedone = "${module.central-aks-gitops.kubeconfig_done}"
   }
 }
 
