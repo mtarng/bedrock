@@ -64,7 +64,7 @@ module "east_vnet" {
 
 data "azurerm_client_config" "eastclient" {}
 
-# Central aks, flux kubediff
+# East aks, flux kubediff
 module "east-aks-gitops" {
   # source = "github.com/Microsoft/bedrock/cluster/azure/aks-gitops"
   source = "../../azure/aks-gitops"
@@ -99,7 +99,6 @@ module "east-flex_volume" {
 
   kubeconfig_complete = "${module.east-aks-gitops.kubeconfig_done}"
 }
-
 
 # create a static public ip and associate with traffic manger endpoint
 module "east_tm_endpoint" {
