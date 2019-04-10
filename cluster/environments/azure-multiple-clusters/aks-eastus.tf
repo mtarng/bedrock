@@ -84,7 +84,7 @@ module "east-aks-gitops" {
   service_principal_id     = "${var.service_principal_id}"
   service_principal_secret = "${var.service_principal_secret}"
   ssh_public_key           = "${var.ssh_public_key}"
-  vnet_subnet_id           = "${var.vnet_subnet_id}"
+  vnet_subnet_id           = "${module.east_vnet.vnet_subnet_ids[0]}"
 }
 
 module "east-flex_volume" {

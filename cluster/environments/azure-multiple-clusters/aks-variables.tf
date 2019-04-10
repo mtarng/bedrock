@@ -66,7 +66,3 @@ variable "keyvault_name" {
 variable "keyvault_resource_group" {
   type = "string"
 }
-
-variable "vnet_subnet_id" {
-  type = "string"
-}
