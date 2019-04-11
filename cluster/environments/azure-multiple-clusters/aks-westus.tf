@@ -28,43 +28,9 @@ module "west_vnet" {
   }
 }
 
-# # Creates aks cluster
-# module "west_aks" {
-#   source = "../../azure/aks"
-
-#   resource_group_name      = "${local.west_rg_name}"
-#   resource_group_location  = "${local.west_rg_location}"
-#   cluster_name             = "${var.cluster_name}-west"
-#   agent_vm_count           = "${var.agent_vm_count}"
-#   dns_prefix               = "${var.dns_prefix}"
-#   vnet_subnet_id           = "${module.west_vnet.vnet_subnet_ids[0]}"
-#   service_cidr             = "${var.west_service_cidr}"
-#   dns_ip                   = "${var.west_dns_ip}"
-#   docker_cidr              = "${var.west_docker_cidr}"
-#   ssh_public_key           = "${var.ssh_public_key}"
-#   service_principal_id     = "${var.service_principal_id}"
-#   service_principal_secret = "${var.service_principal_secret}"
-#   kubeconfig_recreate      = ""
-#   kubeconfig_filename      = "${local.west_kubeconfig_filename}"
-# }
-
-# # Deploys flux in aks cluster
-# module "west_flux" {
-#   source = "../../common/flux"
-
-#   gitops_ssh_url      = "${var.gitops_ssh_url}"
-#   gitops_ssh_key      = "${var.gitops_ssh_key}"
-#   flux_recreate       = "${var.flux_recreate}"
-#   kubeconfig_complete = "${module.west_aks.kubeconfig_done}"
-#   kubeconfig_filename = "${local.west_kubeconfig_filename}"
-#   flux_clone_dir      = "${local.west_flux_clone_dir}"
-#   gitops_path         = "${var.gitops_west_path}"
-#   gitops_poll_interval = "${var.gitops_poll_interval}"
-# }
-
 data "azurerm_client_config" "westclient" {}
 
-# West aks, flux kubediff
+# Creates west aks cluster, flux, kubediff
 module "west-aks-gitops" {
   # source = "github.com/Microsoft/bedrock/cluster/azure/aks-gitops"
   source = "../../azure/aks-gitops"

@@ -30,7 +30,7 @@ module "central_vnet" {
 
 data "azurerm_client_config" "centralclient" {}
 
-# Central aks, flux kubediff
+# Creates central aks cluster, flux, kubediff
 module "central-aks-gitops" {
   # source = "github.com/Microsoft/bedrock/cluster/azure/aks-gitops"
   source = "../../azure/aks-gitops"
@@ -65,42 +65,6 @@ module "central-flex_volume" {
 
   kubeconfig_complete = "${module.central-aks-gitops.kubeconfig_done}"
 }
-
-
-
-# # Creates aks cluster
-# module "central_aks" {
-#   source = "../../azure/aks"
-
-#   resource_group_name      = "${local.central_rg_name }"
-#   resource_group_location  = "${local.central_rg_location}"
-#   cluster_name             = "${var.cluster_name}-central"
-#   agent_vm_count           = "${var.agent_vm_count}"
-#   dns_prefix               = "${var.dns_prefix}"
-#   vnet_subnet_id           = "${module.central_vnet.vnet_subnet_ids[0]}"
-#   service_cidr             = "${var.central_service_cidr}"
-#   dns_ip                   = "${var.central_dns_ip}"
-#   docker_cidr              = "${var.central_docker_cidr}"
-#   ssh_public_key           = "${var.ssh_public_key}"
-#   service_principal_id     = "${var.service_principal_id}"
-#   service_principal_secret = "${var.service_principal_secret}"
-#   kubeconfig_recreate      = ""
-#   kubeconfig_filename      = "${local.central_kubeconfig_filename}"
-# }
-
-# # Deploys flux in aks cluster
-# module "central_flux" {
-#   source = "../../common/flux"
-
-#   gitops_ssh_url      = "${var.gitops_ssh_url}"
-#   gitops_ssh_key      = "${var.gitops_ssh_key}"
-#   flux_recreate       = ""
-#   kubeconfig_complete = "${module.central_aks.kubeconfig_done}"
-#   kubeconfig_filename = "${local.central_kubeconfig_filename}"
-#   flux_clone_dir      = "${local.central_flux_clone_dir}"
-#   gitops_path         = "${var.gitops_central_path}"
-#   gitops_poll_interval = "${var.gitops_poll_interval}"
-# }
 
 # create a static public ip and associate with traffic manger endpoint
 module "central_tm_endpoint" {
