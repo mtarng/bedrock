@@ -36,7 +36,7 @@ module "east_aks_gitops" {
   acr_enabled              = "${var.acr_enabled}"
   agent_vm_count           = "${var.agent_vm_count}"
   agent_vm_size            = "${var.agent_vm_size}"
-  cluster_name             = "${var.cluster_name}"
+  cluster_name             = "${var.cluster_name}_eastus"
   dns_prefix               = "${var.dns_prefix}"
   flux_recreate            = "${var.flux_recreate}"
   gitops_ssh_url           = "${var.gitops_ssh_url}"
@@ -55,9 +55,10 @@ module "east_aks_gitops" {
 }
 
 module "east_flex_volume" {	
-  source = "github.com/Microsoft/bedrock/cluster/azure/keyvault_flexvol"	
+  # source = "github.com/Microsoft/bedrock/cluster/azure/keyvault_flexvol"	
+  source = "../../azure/keyvault_flexvol"	
 
-   resource_group_name      = "${var.keyvault_resource_group}"	
+  resource_group_name      = "${var.keyvault_resource_group}"	
   service_principal_id     = "${var.service_principal_id}"	
   service_principal_secret = "${var.service_principal_secret}"	
   tenant_id                = "${data.azurerm_client_config.current.tenant_id}"	
@@ -88,9 +89,8 @@ module "east_tm_endpoint" {
 
 # Create a role assignment with Contributor role for AKS client service principal object
 #   to join vnet/subnet/ip for load balancer/ingress controller
-resource "azurerm_role_assignment" "east_spra" {
-  count                = "1"
-  principal_id         = "${data.azuread_service_principal.sp.id}"
-  role_definition_name = "${var.aks_client_role_assignment_role}"
-  scope                = "${azurerm_resource_group.eastrg.id}"
-}
+# resource "azurerm_role_assignment" "east_spra" {
+#   principal_id         = "${data.azuread_service_principal.sp.id}"
+#   role_definition_name = "${var.aks_client_role_assignment_role}"
+#   scope                = "${azurerm_resource_group.eastrg.id}"
+# }
