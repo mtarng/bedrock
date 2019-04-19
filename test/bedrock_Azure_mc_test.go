@@ -137,9 +137,9 @@ func TestIT_Bedrock_AzureMC_Test(t *testing.T) {
 	centralCluster_out:=	cluster_location3 + "-" + k8sName + "_kube_config"
 	
 	//Obtain Kube_config file from module outputs of each cluster region
-	os.Setenv("WEST_KUBECONFIG", "../cluster/environments/azure-multiple-clusters/output/"+westCluster_out)
-	os.Setenv("EAST_KUBECONFIG", "../cluster/environments/azure-multiple-clusters/output/"+eastCluster_out)
-	os.Setenv("CENTRAL_KUBECONFIG", "../cluster/environments/azure-multiple-clusters/output/"+centralCluster_out)
+	os.Setenv("WEST_KUBECONFIG", "../cluster/environments/azure-multiple-clusters/output/"+ westCluster_out)
+	os.Setenv("EAST_KUBECONFIG", "../cluster/environments/azure-multiple-clusters/output/"+ eastCluster_out)
+	os.Setenv("CENTRAL_KUBECONFIG", "../cluster/environments/azure-multiple-clusters/output/"+ centralCluster_out)
 
 	//Test Case 1: Verify Flux namespace in West Region
 	kubeConfig := os.Getenv("WEST_KUBECONFIG")

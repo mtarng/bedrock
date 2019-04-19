@@ -89,8 +89,8 @@ module "central_tm_endpoint" {
 
 # Create a role assignment with Contributor role for AKS client service principal object
 #   to join vnet/subnet/ip for load balancer/ingress controller
-# resource "azurerm_role_assignment" "central_spra" {
-#   principal_id         = "${data.azuread_service_principal.sp.id}"
-#   role_definition_name = "${var.aks_client_role_assignment_role}"
-#   scope                = "${azurerm_resource_group.centralrg.id}"
-# }
+resource "azurerm_role_assignment" "central_spra" {
+  principal_id         = "${data.azuread_service_principal.sp.id}"
+  role_definition_name = "${var.aks_client_role_assignment_role}"
+  scope                = "${azurerm_resource_group.centralrg.id}"
+}
