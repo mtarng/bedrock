@@ -36,7 +36,7 @@ module "central_aks_gitops" {
   acr_enabled              = "${var.acr_enabled}"
   agent_vm_count           = "${var.agent_vm_count}"
   agent_vm_size            = "${var.agent_vm_size}"
-  cluster_name             = "${var.cluster_name}_centralus"
+  cluster_name             = "${var.cluster_name}"
   dns_prefix               = "${var.dns_prefix}"
   flux_recreate            = "${var.flux_recreate}"
   gitops_ssh_url           = "${var.gitops_ssh_url}"
@@ -52,6 +52,7 @@ module "central_aks_gitops" {
   vnet_subnet_id           = "${module.central_vnet.vnet_subnet_ids[0]}"
   dns_ip                   = "${var.central_dns_ip}"
   docker_cidr              = "${var.central_docker_cidr}"
+  kubeconfig_filename      = "${local.central_kubeconfig_filename}"
 }
 
 module "central_flex_volume" {	
@@ -65,7 +66,7 @@ module "central_flex_volume" {
   subscription_id          = "${data.azurerm_client_config.current.subscription_id}"	
   keyvault_name            = "${var.keyvault_name}"	
 
-  kubeconfig_complete = "${module.central_aks_gitops.kubeconfig_done}"	
+  kubeconfig_complete = "${module.central_aks_gitops.aks_flux_kubediff_done}"	
 }
 
 # create a static public ip and associate with traffic manger endpoint
