@@ -36,7 +36,7 @@ module "east_aks_gitops" {
   acr_enabled              = "${var.acr_enabled}"
   agent_vm_count           = "${var.agent_vm_count}"
   agent_vm_size            = "${var.agent_vm_size}"
-  cluster_name             = "${var.cluster_name}"
+  cluster_name             = "${var.cluster_name}_eastus"
   dns_prefix               = "${var.dns_prefix}"
   flux_recreate            = "${var.flux_recreate}"
   gitops_ssh_url           = "${var.gitops_ssh_url}"
@@ -66,7 +66,7 @@ module "east_flex_volume" {
   subscription_id          = "${data.azurerm_client_config.current.subscription_id}"	
   keyvault_name            = "${var.keyvault_name}"	
 
-   kubeconfig_complete = "${module.east_aks_gitops.aks_flux_kubediff_done}"	
+  kubeconfig_complete = "${module.east_aks_gitops.aks_flux_kubediff_done}"	
 }
 
 # create a static public ip and associate with traffic manger endpoint

@@ -36,7 +36,7 @@ module "central_aks_gitops" {
   acr_enabled              = "${var.acr_enabled}"
   agent_vm_count           = "${var.agent_vm_count}"
   agent_vm_size            = "${var.agent_vm_size}"
-  cluster_name             = "${var.cluster_name}"
+  cluster_name             = "${var.cluster_name}_centralus"
   dns_prefix               = "${var.dns_prefix}"
   flux_recreate            = "${var.flux_recreate}"
   gitops_ssh_url           = "${var.gitops_ssh_url}"

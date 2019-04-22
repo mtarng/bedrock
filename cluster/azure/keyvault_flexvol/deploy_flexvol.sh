@@ -10,8 +10,6 @@ do
  esac
 done 
 
-echo "deploying kubectl apply NOT create"
-
 # Deploy the flex volume support into the cluster
 kubectl apply -f $FLEXVOL_DEPLOYMENT_URL
 if [ $? != 0 ]; then
