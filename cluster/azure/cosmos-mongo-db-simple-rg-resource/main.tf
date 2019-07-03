@@ -1,15 +1,11 @@
 #Simple CosmosDB/MongoDB deployment. No multiregion failover support.
 
-# resource "azurerm_resource_group" "cosmosdb_rg" {
-#   # name     = "${var.prefix}_rg" 
-#   name     = "${var.resource_group_name}"
-#   location = "${var.resource_group_location}"
-# }
-# TODO: Change to data, use global resource group.
-
-data "azurerm_resource_group" "cosmosdb_rg" {
-  name = "${var.global_rg}"
+resource "azurerm_resource_group" "cosmosdb_rg" {
+  # name     = "${var.prefix}_rg" 
+  name     = "${var.resource_group_name}"
+  location = "${var.resource_group_location}"
 }
+# TODO: Change to data, use global resource group.
 
 resource "azurerm_cosmosdb_account" "cosmosdb_account" {
   name                = "${var.cosmos_db_name}"

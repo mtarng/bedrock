@@ -1,5 +1,10 @@
-variable "global_rg" {
+variable "resource_group_name" {
   description = "The resource group name for this cosmos db"
+  type = "string"
+}
+
+variable "resource_group_location" {
+  description = "The region for this resource group"
   type = "string"
 }
 
