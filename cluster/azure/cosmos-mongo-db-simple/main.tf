@@ -13,8 +13,8 @@ data "azurerm_resource_group" "cosmosdb_rg" {
 
 resource "azurerm_cosmosdb_account" "cosmosdb_account" {
   name                = "${var.cosmos_db_name}"
-  location            = "${azurerm_resource_group.cosmosdb_rg.location}"
-  resource_group_name = "${azurerm_resource_group.cosmosdb_rg.name}"
+  location            = "${data.azurerm_resource_group.cosmosdb_rg.location}"
+  resource_group_name = "${data.azurerm_resource_group.cosmosdb_rg.name}"
   offer_type          = "${var.cosmos_db_offer_type}"
   kind                = "MongoDB"
 
@@ -26,7 +26,7 @@ resource "azurerm_cosmosdb_account" "cosmosdb_account" {
 
   geo_location {
     prefix            = "${var.cosmos_db_name}-customid"
-    location          = "${azurerm_resource_group.cosmosdb_rg.location}"
+    location          = "${data.azurerm_resource_group.cosmosdb_rg.location}"
     failover_priority = 0
   }
 }
