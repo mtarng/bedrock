@@ -144,7 +144,7 @@ function get_spk_version() {
     if [ -z "$VERSION" ]
     then
         # By default, the script will use the most recent non-prerelease, non-draft release SPK
-        SPK_VERSION_TO_DOWNLOAD=$(curl -s "https://api.github.com/repos/CatalystCode/spk/releases/latest" | grep "tag_name" | sed -E 's/.*"([^"]+)".*/\1/')
+        SPK_VERSION_TO_DOWNLOAD=$(curl -s "https://api.github.com/repos/mtarng/spk/releases/latest" | grep "tag_name" | sed -E 's/.*"([^"]+)".*/\1/')
     else
         echo "SPK Version: $VERSION"
         SPK_VERSION_TO_DOWNLOAD=$VERSION
