@@ -1,32 +1,29 @@
 # Bedrock
 
 [![Build Status](https://dev.azure.com/epicstuff/bedrock/_apis/build/status/Microsoft.bedrock?branchName=master)](https://dev.azure.com/epicstuff/bedrock/_build/latest?definitionId=54&branchName=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/microsoft/bedrock)](https://goreportcard.com/report/github.com/microsoft/bedrock)
 
-This project is our humble attempt to combine the collective wisdom of the cloud native community for building best practice cloud native Kubernetes clusters, based on real world experiences deploying and operating applications and Kubernetes clusters.
+Bedrock is automation and tooling for operationalizing production Kubernetes clusters with a [GitOps](./gitops) workflow.  GitOps enables you to build a workflow around your deployments and infrastructure similiar to that of a typical development workflow: pull request based operational changes, point in time auditability into what was deployed on the Kubernetes cluster, and providing nonrepudation about who made those changes.
 
-Bedrock is a set of automation, tooling, and infrastructure for deploying production-level Kubernetes clusters with a secure and auditable [GitOps](https://www.weave.works/blog/gitops-operations-by-pull-request) workflow.  
+This GitOps workflow revolves around [Fabrikate](https://github.com/Microsoft/fabrikate) definitions that enable you to specify your deployments at a higher level of abstraction that separates structure from configuration.  This makes them easier to maintain versus directly specifying them in Kubernetes resource manifest YAML or cobbling together shell scripts to build Kubernetes resource manifests from templating solutions.  Fabrikate definitions also allow you to leverage common pieces across many deployments and to share structure amongst different clusters differentiated only by config.
 
-In our implementation of this methodology, you build a [Fabrikate](https://github.com/Microsoft/fabrikate) high level deployment definition of what should be deployed in your cluster. We believe that defining your deployment at this higher level of abstraction is less error prone than directly editing resource manifest files or cobbling together shell scripts to build resource manifests from Helm templates, and allows you to leverage common pieces across many deployments and to share structure amongst different clusters differentiated by config.
+Bedrock also provides [guidance and automation](./gitops/README.md) for building GitOps pipelines with a variety of popular CI/CD orchestrators.
 
-A CI/CD pipeline then generates Kubernetes resource manifests from these Fabrikate high level definitions. On each commit to the high level definition repo, this CI/CD pipeline uses Fabrikate to generate resource manifests from this definition and checks them into a resource manifest git repo. This resource manifest repo both specifies exactly what should be deployed and also maintains an audit trail of all of the low level operational changes. This combination of high level definition and resource manifest repos allow you to secure, control, code review, and audit what is currently deployed at both a high and low level.
-
-Bedrock also provides automation for deploying Kubernetes clusters with Terraform, including deployment and setup of [Flux](https://github.com/weaveworks/flux), which automates the application of the resource manifests specified.
+Finally, Bedrock provides a set of Terraform environment templates for deploying your Kubernetes clusters, including automation for setting up the GitOps Operator [Flux](https://github.com/fluxcd/flux) in your cluster.
 
 ## Getting Started
 
-A Bedrock deployment follows three general steps at a high level:
+A Bedrock deployment follows three steps at a high level:
 
-1. Define a [Fabrikate](https://github.com/Microsoft/fabrikate) definition for your deployment.
-2. [Deploy a CI/CD pipeline](./gitops) to build resource manifests from this deployment definition.
-3. [Create and deploy](./cluster) a Kubernetes environment with Flux.
+1. [Create and deploy](./cluster/README.md) a GitOps enabled Kubernetes cluster.
+2. Define a [Fabrikate](https://github.com/microsoft/fabrikate) high level deployment definition.
+3. [Setup a GitOps pipeline](./gitops/README.md) to automate deployments of this definition to this cluster based on typical application and cluster lifecycle events.
 
-Our cluster creation templates include deployments of a [cloud-native stack](https://github.com/timfpark/fabrikate-cloud-native) by default.  This is intended to be replaced with your own resource manifest repo, but you can also take advantage of this by jumping directly to step #3 if you'd like to give Bedrock a try before defining your own deployment.
-
-The easiest way to try Bedrock is to start with our [azure-simple](https://github.com/Microsoft/bedrock/tree/master/cluster/environments/azure-simple) deployment template or with [minikube](https://github.com/Microsoft/bedrock/tree/master/cluster/environments/minikube) to try it locally.   
+The steps required to operationalize a production Kubernetes cluster can be pretty extensive, so we have also put together a [simple walkthrough for deploying a first cluster](./docs/azure-simple/README.md) that makes a great first step.
 
 ## Community
 
-[Please join us on Slack](https://publicslack.com/slacks/https-bedrockco-slack-com/invites/new) for discussion and/or questions.
+[Please join us on Slack](https://join.slack.com/t/bedrockco/shared_invite/enQtNjIwNzg3NTU0MDgzLWRiYzQxM2ZmZjQ2NGE2YjA2YTJmMjg3ZmJmOTQwOWY0MTU3NDVkNDJkZDUyMDExZjIxNTg5NWY3MTI3MzFiN2U) for discussion and/or questions.
 
 ## Contributing
 

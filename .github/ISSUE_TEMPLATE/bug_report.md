@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: bug
-assignees: ''
-
+title: ""
+labels: bug, triage
+assignees: ""
 ---
 
 **Describe the bug:**
@@ -16,3 +15,5 @@ assignees: ''
 **Screenshots:**
 
 **Additional context:**
+
+**Does this require updates to documentation?:**

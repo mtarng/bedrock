@@ -2,13 +2,16 @@ package test
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
 	"strings"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
+	"github.com/otiai10/copy"
 )
 
 func TestIT_Bedrock_AzureSimple_Test(t *testing.T) {
@@ -18,22 +21,42 @@ func TestIT_Bedrock_AzureSimple_Test(t *testing.T) {
 	uniqueID := random.UniqueId()
 	k8sName := fmt.Sprintf("gTestk8s-%s", uniqueID)
 
-	addressSpace := "10.39.0.0/16"
+	subnetPrefix := "10.10.1.0/24"
+	addressSpace := "10.10.0.0/16"
 	clientid := os.Getenv("ARM_CLIENT_ID")
 	clientsecret := os.Getenv("ARM_CLIENT_SECRET")
+	tenantId := os.Getenv("ARM_TENANT_ID")
 	dnsprefix := k8sName + "-dns"
 	k8sRG := k8sName + "-rg"
+	k8sVersion := "1.15.7"
 	location := os.Getenv("DATACENTER_LOCATION")
 	publickey := os.Getenv("public_key")
 	sshkey := os.Getenv("ssh_key")
-	subnetName := k8sName + "-subnet"
-	subscriptionid := os.Getenv("ARM_SUBSCRIPTION_ID")
-	tenantid := os.Getenv("ARM_TENANT_ID")
 	vnetName := k8sName + "-vnet"
+
+	//Copy env directories as needed to avoid conflicting with other running tests
+	azureSimpleInfraFolder := "../cluster/test-temp-envs/azure-simple-" + k8sName
+	copy.Copy("../cluster/environments/azure-simple", azureSimpleInfraFolder)
+
+	//Create the resource group
+	cmd0 := exec.Command("az", "login", "--service-principal", "-u", clientid, "-p", clientsecret, "--tenant", tenantId)
+	err0 := cmd0.Run()
+	if err0 != nil {
+		fmt.Println("unable to login to azure cli")
+		log.Fatal(err0)
+		os.Exit(-1)
+	}
+	cmd1 := exec.Command("az", "group", "create", "-n", k8sRG, "-l", location)
+	err1 := cmd1.Run()
+	if err1 != nil {
+		fmt.Println("failed to create resource group")
+		log.Fatal(err1)
+		os.Exit(-1)
+	}
 
 	// Specify the test case folder and "-var" options
 	tfOptions := &terraform.Options{
-		TerraformDir: "../cluster/environments/azure-simple",
+		TerraformDir: azureSimpleInfraFolder,
 		Upgrade:      true,
 		Vars: map[string]interface{}{
 			"address_space":            addressSpace,
@@ -41,15 +64,12 @@ func TestIT_Bedrock_AzureSimple_Test(t *testing.T) {
 			"dns_prefix":               dnsprefix,
 			"gitops_ssh_url":           "git@github.com:timfpark/fabrikate-cloud-native-manifests.git",
 			"gitops_ssh_key":           sshkey,
+                        "kubernetes_version":       k8sVersion,
 			"resource_group_name":      k8sRG,
-			"resource_group_location":  location,
 			"service_principal_id":     clientid,
 			"service_principal_secret": clientsecret,
 			"ssh_public_key":           publickey,
-			"subnet_name":              subnetName,
-			"subnet_prefix":            addressSpace,
-			"subscription_id":          subscriptionid,
-			"tenant_id":                tenantid,
+			"subnet_prefix":            subnetPrefix,
 			"vnet_name":                vnetName,
 		},
 	}
@@ -59,7 +79,7 @@ func TestIT_Bedrock_AzureSimple_Test(t *testing.T) {
 	terraform.InitAndApply(t, tfOptions)
 
 	// Obtain Kube_config file from module output
-	os.Setenv("KUBECONFIG", "../cluster/environments/azure-simple/output/bedrock_kube_config")
+	os.Setenv("KUBECONFIG", azureSimpleInfraFolder+"/output/bedrock_kube_config")
 	kubeConfig := os.Getenv("KUBECONFIG")
 
 	options := k8s.NewKubectlOptions("", kubeConfig)
