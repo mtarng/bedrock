@@ -31,8 +31,7 @@ function helm_init() {
 # If the version number is not provided, then download the latest
 function get_fab_version() {
     # shellcheck disable=SC2153
-    if [ -z "$VERSION" ]
-    then
+    if [ -z "$VERSION" ]; then
         # By default, the script will use the most recent non-prerelease, non-draft release Fabrikate
         VERSION_TO_DOWNLOAD=$(curl -s "https://api.github.com/repos/microsoft/fabrikate/releases/latest" | grep "tag_name" | sed -E 's/.*"([^"]+)".*/\1/')
     else
@@ -62,7 +61,7 @@ function download_fab() {
     get_os os
     fab_wget=$(wget -SO- "https://github.com/Microsoft/fabrikate/releases/download/$VERSION_TO_DOWNLOAD/fab-v$VERSION_TO_DOWNLOAD-$os-amd64.zip" 2>&1 | grep -E -i "302")
     if [[ $fab_wget == *"302 Found"* ]]; then
-       echo "Fabrikate $VERSION_TO_DOWNLOAD downloaded successfully."
+        echo "Fabrikate $VERSION_TO_DOWNLOAD downloaded successfully."
     else
         echo "There was an error when downloading Fabrikate. Please check version number and try again."
     fi
@@ -101,7 +100,6 @@ function install_fab() {
     echo "FAB INSTALL COMPLETED"
 }
 
-
 # Run fab generate
 function fab_generate() {
     # For backwards compatibility, support pipelines that have not set this variable
@@ -112,7 +110,7 @@ function fab_generate() {
         fab generate prod
     else
         echo "FAB_ENVS is set to $FAB_ENVS"
-        IFS=',' read -ra ENV <<< "$FAB_ENVS"
+        IFS=',' read -ra ENV <<<"$FAB_ENVS"
         for i in "${ENV[@]}"; do
             echo "FAB GENERATE $i"
             # In this case, we do want to split the string by unquoting $i so that the fab generate command
@@ -130,9 +128,9 @@ function fab_generate() {
     # generated folder should still not be empty
     if find "generated" -mindepth 1 -print -quit 2>/dev/null | grep -q .; then
         export manifest_files_location=$(pwd)
-        echo "Manifest files have been generated in `pwd`."
+        echo "Manifest files have been generated in $(pwd)."
     else
-        echo "Manifest files could not be generated in `pwd`, quitting..."
+        echo "Manifest files could not be generated in $(pwd), quitting..."
         exit 1
     fi
 }
@@ -141,8 +139,7 @@ function fab_generate() {
 # If the version number is not provided, then download the latest
 function get_spk_version() {
     # shellcheck disable=SC2153
-    if [ -z "$VERSION" ]
-    then
+    if [ -z "$VERSION" ]; then
         # By default, the script will use the most recent non-prerelease, non-draft release SPK
         SPK_VERSION_TO_DOWNLOAD=$(curl -s "https://api.github.com/repos/mtarng/spk/releases/latest" | grep "tag_name" | sed -E 's/.*"([^"]+)".*/\1/')
     else
@@ -172,14 +169,14 @@ function download_spk() {
     get_os_spk os
     spk_wget=$(wget -SO- "https://github.com/CatalystCode/spk/releases/download/$SPK_VERSION_TO_DOWNLOAD/spk-$os" 2>&1 | grep -E -i "302")
     if [[ $spk_wget == *"302 Found"* ]]; then
-    echo "SPK $SPK_VERSION_TO_DOWNLOAD downloaded successfully."
+        echo "SPK $SPK_VERSION_TO_DOWNLOAD downloaded successfully."
     else
         echo "There was an error when downloading SPK. Please check version number and try again."
     fi
     wget "https://github.com/CatalystCode/spk/releases/download/$SPK_VERSION_TO_DOWNLOAD/spk-$os"
     mkdir spk
     mv spk-$os spk/spk
-    chmod +x spk/spk 
+    chmod +x spk/spk
 
     export PATH=$PATH:$HOME/spk
 }
@@ -208,7 +205,7 @@ function git_connect() {
 # Git commit
 function git_commit() {
     echo "GIT CHECKOUT $BRANCH_NAME"
-    if ! git checkout "$BRANCH_NAME" ; then
+    if ! git checkout "$BRANCH_NAME"; then
         git checkout -b "$BRANCH_NAME"
     fi
 
