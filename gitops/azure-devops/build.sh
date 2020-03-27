@@ -31,7 +31,8 @@ function helm_init() {
 # If the version number is not provided, then download the latest
 function get_fab_version() {
     # shellcheck disable=SC2153
-    if [ -z "$VERSION" ]; then
+    if [ -z "$VERSION" ]
+    then
         # By default, the script will use the most recent non-prerelease, non-draft release Fabrikate
         VERSION_TO_DOWNLOAD=$(curl -s "https://api.github.com/repos/microsoft/fabrikate/releases/latest" | grep "tag_name" | sed -E 's/.*"([^"]+)".*/\1/')
     else
@@ -61,7 +62,7 @@ function download_fab() {
     get_os os
     fab_wget=$(wget -SO- "https://github.com/Microsoft/fabrikate/releases/download/$VERSION_TO_DOWNLOAD/fab-v$VERSION_TO_DOWNLOAD-$os-amd64.zip" 2>&1 | grep -E -i "302")
     if [[ $fab_wget == *"302 Found"* ]]; then
-        echo "Fabrikate $VERSION_TO_DOWNLOAD downloaded successfully."
+       echo "Fabrikate $VERSION_TO_DOWNLOAD downloaded successfully."
     else
         echo "There was an error when downloading Fabrikate. Please check version number and try again."
     fi
@@ -100,6 +101,7 @@ function install_fab() {
     echo "FAB INSTALL COMPLETED"
 }
 
+
 # Run fab generate
 function fab_generate() {
     # For backwards compatibility, support pipelines that have not set this variable
@@ -110,7 +112,7 @@ function fab_generate() {
         fab generate prod
     else
         echo "FAB_ENVS is set to $FAB_ENVS"
-        IFS=',' read -ra ENV <<<"$FAB_ENVS"
+        IFS=',' read -ra ENV <<< "$FAB_ENVS"
         for i in "${ENV[@]}"; do
             echo "FAB GENERATE $i"
             # In this case, we do want to split the string by unquoting $i so that the fab generate command
@@ -128,9 +130,9 @@ function fab_generate() {
     # generated folder should still not be empty
     if find "generated" -mindepth 1 -print -quit 2>/dev/null | grep -q .; then
         export manifest_files_location=$(pwd)
-        echo "Manifest files have been generated in $(pwd)."
+        echo "Manifest files have been generated in `pwd`."
     else
-        echo "Manifest files could not be generated in $(pwd), quitting..."
+        echo "Manifest files could not be generated in `pwd`, quitting..."
         exit 1
     fi
 }
@@ -139,9 +141,10 @@ function fab_generate() {
 # If the version number is not provided, then download the latest
 function get_spk_version() {
     # shellcheck disable=SC2153
-    if [ -z "$VERSION" ]; then
+    if [ -z "$VERSION" ]
+    then
         # By default, the script will use the most recent non-prerelease, non-draft release SPK
-        SPK_VERSION_TO_DOWNLOAD=$(curl -s "https://api.github.com/repos/mtarng/spk/releases/latest" | grep "tag_name" | sed -E 's/.*"([^"]+)".*/\1/')
+        SPK_VERSION_TO_DOWNLOAD=$(curl -s "https://api.github.com/repos/CatalystCode/spk/releases/latest" | grep "tag_name" | sed -E 's/.*"([^"]+)".*/\1/')
     else
         echo "SPK Version: $VERSION"
         SPK_VERSION_TO_DOWNLOAD=$VERSION
@@ -205,7 +208,7 @@ function git_connect() {
 # Git commit
 function git_commit() {
     echo "GIT CHECKOUT $BRANCH_NAME"
-    if ! git checkout "$BRANCH_NAME"; then
+    if ! git checkout "$BRANCH_NAME" ; then
         git checkout -b "$BRANCH_NAME"
     fi
 
@@ -238,6 +241,35 @@ function git_commit() {
 
     echo "GIT PULL origin $BRANCH_NAME"
     git pull origin "$BRANCH_NAME"
+}
+
+# Checks for changes and only commits if there are changes staged. Optionally can be configured to fail if called to commit and no changes are staged.
+# First arg - commit message
+# Second arg - "should error if there is nothing to commit" flag. Set to 0 if this behavior should be skipped and it will not error when there are no changes.
+# Third arg - variable to check if changes were commited or not. Will be set to 1 if changes were made, 0 if not.
+function git_commit_if_changes() {
+
+    echo "GIT STATUS"
+    git status
+
+    echo "GIT ADD"
+    git add -A
+
+    commitSuccess=0
+    if [[ $(git status --porcelain) ]] || [ -z "$2" ]; then
+        echo "GIT COMMIT"
+        git commit -m "$1"
+        retVal=$?
+        if [[ "$retVal" != "0" ]]; then
+            echo "ERROR COMMITING CHANGES -- MAYBE: NO CHANGES STAGED"
+            exit $retVal
+        fi
+        commitSuccess=1
+    else
+        echo "NOTHING TO COMMIT"
+    fi
+    echo "commitSuccess=$commitSuccess"
+    printf -v $3 "$commitSuccess"
 }
 
 # Perform a Git push
